@@ -19,6 +19,7 @@ protected:
 private slots:
     void iconActivated(QSystemTrayIcon::ActivationReason reason);
     void connectTab(int idx);
+    void closeTab(int idx);
     void about();
     void openCam();
     void newCam();

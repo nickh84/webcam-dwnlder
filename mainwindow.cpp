@@ -19,7 +19,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     prevTabIdx = 0;
     tabWidget = new QTabWidget;
+    tabWidget->setTabsClosable(true);
     connect(tabWidget, SIGNAL(currentChanged(int)), this, SLOT(connectTab(int)));
+    connect(tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTab(int)));
 
     setCentralWidget(tabWidget);
     readSettings();
@@ -51,8 +53,8 @@ void MainWindow::writeSettings()
     for (int i = 0; i < tabWidget->count(); ++i) {
         settings.setArrayIndex(i);
         CamTab *tab = (CamTab *)tabWidget->widget(i);
-        settings.setValue("title", tab->cam.getTitle());
-        settings.setValue("config", tab->cam.getSettingsFile());
+        settings.setValue("title", tab->getTitle());
+        settings.setValue("config", tab->getSettingsFile());
     }
     settings.endArray();
 }
@@ -74,47 +76,24 @@ void MainWindow::closeEvent(QCloseEvent *event)
     }
 }
 
-void MainWindow::test(int i)
-{
-    // Dragster
-    if (i == 1) {
-        CamTab *cam = new CamTab;
-        cam->cam.setTitle("Dragster");
-        cam->cam.setUrl("http://174.121.245.214/cp/DragsterCam_1024.jpg");
-        cam->cam.setDir("C:/Users/Nick/Documents/CPWeb/Dragster");
-        cam->cam.setInterval(60);
-        tabWidget->addTab(cam, cam->cam.getTitle());
-        cam->cam.start();
-    }
-    // Pagoda
-    if (i == 2) {
-        CamTab *cam = new CamTab;
-        cam->cam.setTitle("Pagoda");
-        cam->cam.setUrl("http://174.121.245.214/cp/PagodaCam_1024.jpg");
-        cam->cam.setDir("C:/Users/Nick/Documents/CPWeb/Pagoda");
-        cam->cam.setInterval(60);
-        tabWidget->addTab(cam, cam->cam.getTitle());
-        cam->cam.start();
-    }
-
-    // Breakers
-    if (i == 3) {
-        CamTab *cam = new CamTab;
-        cam->cam.setTitle("Breakers");
-        cam->cam.setUrl("http://174.121.245.214/cp/HalloweekendsCam_1024.jpg");
-        cam->cam.setDir("C:/Users/Nick/Documents/CPWeb/Breakers");
-        cam->cam.setInterval(60);
-        tabWidget->addTab(cam, cam->cam.getTitle());
-        cam->cam.start();
-    }
-}
-
 void MainWindow::connectTab(int idx)
 {
     // Status bar messages
-    disconnect(tabWidget->widget(prevTabIdx), SIGNAL(updateStatusText(QString)), statusBar(), SLOT(showMessage(QString)));
-    connect(tabWidget->widget(idx), SIGNAL(updateStatusText(QString)), statusBar(), SLOT(showMessage(QString)));
+    if (tabWidget->widget(prevTabIdx)) {
+        printf("Disconnect\n");
+        disconnect(tabWidget->widget(prevTabIdx), SIGNAL(updateStatusText(QString)), statusBar(), SLOT(showMessage(QString)));
+    }
+    if (tabWidget->widget(idx)) {
+        printf("Connect\n");
+        connect(tabWidget->widget(idx), SIGNAL(updateStatusText(QString)), statusBar(), SLOT(showMessage(QString)));
+    }
     prevTabIdx = idx;
+}
+
+void MainWindow::closeTab(int idx)
+{
+    tabWidget->widget(idx)->close();
+    tabWidget->removeTab(idx);
 }
 
 void MainWindow::createTrayIcon()
@@ -195,9 +174,9 @@ void MainWindow::createStatusBar()
 void MainWindow::createTab(QString fileName)
 {
     CamTab *cam = new CamTab;
-    cam->cam.loadSettingsFile(fileName);
-    tabWidget->addTab(cam, cam->cam.getTitle());
-    cam->cam.start();
+    cam->loadSettingsFile(fileName);
+    tabWidget->addTab(cam, cam->getTitle());
+    cam->start();
 }
 
 void MainWindow::openCam()
@@ -215,12 +194,12 @@ void MainWindow::newCam()
     //PLACEHOLDERS
     nc->title->setText("Dragster");
     nc->url->setText("http://174.121.245.214/cp/DragsterCam_1024.jpg");
-    nc->dir->setText("C:/Users/Nick/Documents/CPWeb/Dragster");
+    nc->dir->setText("C:/Users/Nick/Documents/QTWorkspace/dragtmp");
 
     if(!nc->exec())
         return;
 
-    // Create a settings file for new cam.
+    // Create a settings file for new cam
     QString file = nc->dir->text();
     file += '/';
     file += nc->title->text();

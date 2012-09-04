@@ -12,13 +12,11 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    getcam.cpp \
     newdialog.cpp \
     camtab.cpp
 
 HEADERS  += mainwindow.h \
     config.h \
-    getcam.h \
     newdialog.h \
     camtab.h
 

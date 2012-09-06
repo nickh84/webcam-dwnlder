@@ -8,6 +8,7 @@
 #include <QUrl>
 #include <QDateTime>
 #include <QDir>
+#include "camviewport.h"
 
 class CamTab : public QWidget
 {
@@ -55,7 +56,7 @@ private:
     void createMainLayout();
     void statusText(QString txt);
 
-    QLabel *viewPort;
+    CamViewPort *viewPort;
     QString title;
     QDir dir;
     QUrl url;

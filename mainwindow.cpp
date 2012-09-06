@@ -12,6 +12,8 @@ MainWindow::MainWindow(QWidget *parent)
     killCheck = false;
 
     setWindowIcon(QIcon(":/images/camicon.png"));
+    setWindowTitle("Webcam Downloader - " VERSION);
+    setMinimumSize(640,480);
     createActions();
     createMenus();
     createStatusBar();
@@ -220,5 +222,6 @@ void MainWindow::newCam()
 void MainWindow::about()
 {
     QMessageBox::about(this, tr("About Application"),
-                       tr("Download a Webcam Image over the internet at a timed interval"));
+                       tr("Download a Webcam Image over the internet at a timed interval. \n\n"
+                          VERSION));
 }

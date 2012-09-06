@@ -11,6 +11,7 @@
 #include <stdio.h>
 
 #include "camtab.h"
+#include "camviewport.h"
 #include "config.h"
 
 CamTab::CamTab(QWidget *parent) :
@@ -29,10 +30,7 @@ CamTab::CamTab(QWidget *parent) :
 
 void CamTab::createMainLayout()
 {
-    viewPort = new QLabel();
-    viewPort->setScaledContents(true);
-    viewPort->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Ignored);
-
+    viewPort = new CamViewPort;
     QHBoxLayout *hLayout = new QHBoxLayout;
     hLayout->setContentsMargins(0,0,0,0);
     hLayout->addWidget(viewPort);
@@ -47,9 +45,7 @@ void CamTab::closeEvent(QCloseEvent *event)
 
 void CamTab::updateViewPort()
 {
-    QPixmap view(getCurrentCam());
-    viewPort->setMinimumSize(view.width()/2, view.height()/2);
-    viewPort->setPixmap(view);
+    viewPort->load(getCurrentCam());
 
     QString stxt(getCurrentCam());
     stxt += " - ";

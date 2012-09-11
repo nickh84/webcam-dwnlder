@@ -18,12 +18,16 @@ protected:
 
 private slots:
     void iconActivated(QSystemTrayIcon::ActivationReason reason);
-    void connectTab(int idx);
+    void tabChanged(int idx);
     void closeTab(int idx);
     void about();
     void openCam();
     void newCam();
     void _close();
+    void startCam();
+    void stopCam();
+    void optionsCam();
+    void cvideoCam();
 
 private:
     void createTrayIcon();
@@ -41,12 +45,19 @@ private:
 
     QTabWidget *tabWidget;
 
+    // File Menu
     QMenu *fileMenu;
-    QMenu *helpMenu;
-
     QAction *newAct;
     QAction *openAct;
     QAction *exitAct;
+    // Cam Menu
+    QMenu *camMenu;
+    QAction *startAct;
+    QAction *stopAct;
+    QAction *optionsAct;
+    QAction *cvideoAct;
+    // Help Menu
+    QMenu *helpMenu;
     QAction *aboutAct;
     QAction *aboutQtAct;
 

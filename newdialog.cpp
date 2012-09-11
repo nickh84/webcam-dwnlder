@@ -25,8 +25,7 @@ newDialog::newDialog(QWidget *parent) :
     url = new QLineEdit;
     dir = new dirComboBox;
     interval = new QSpinBox;
-    interval->setSuffix("sec");
-    interval->setMaximum(86400);
+    interval->setSuffix(" seconds");
     interval->setValue(60);
 
     formLayout->addRow(tr("&Title"), title);

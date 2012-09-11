@@ -61,12 +61,22 @@ void CamTab::statusText(QString txt)
 // Cam Operation
 void CamTab::start()
 {
+    if (timer->isActive()) {
+        statusText("Already started...");
+        return;
+    }
+    statusText("Recording started");
     timer->start(interval*1000);
     execute();
 }
 
 void CamTab::stop()
 {
+    if (!timer->isActive()) {
+        statusText("Not recording...");
+        return;
+    }
+    statusText("Recording stoped");
     timer->stop();
 }
 

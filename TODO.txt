@@ -1,0 +1,8 @@
+Code clean up
+Proper variable creation and freeing
+Error handling
+Time frame scheduler
+Proper resizing of windows
+Video creation using selection
+Merge video creation dialog and CamTab
+Image comparsion to check for duplicates

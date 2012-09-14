@@ -14,10 +14,19 @@
 #include "camviewport.h"
 #include "config.h"
 
-CamTab::CamTab(QWidget *parent) :
+CamTab::CamTab(CamSettings * set, QWidget *parent) :
     QWidget(parent)
 {
+    settings = set;
     createMainLayout();
+
+    QString suffix(settings->getExt());
+    suffix.prepend("*.");
+    frameList = QDir(settings->getDir()).entryInfoList(QStringList(suffix), QDir::Files, QDir::Name);
+    if (!frameList.isEmpty()) {
+        currentFile = frameList.last().absoluteFilePath();
+        updateViewPort();
+    }
 
     timer = new QTimer(this);
     connect(&manager, SIGNAL(finished(QNetworkReply*)), SLOT(downloadFinished(QNetworkReply*)));
@@ -75,13 +84,6 @@ void CamTab::stop()
     timer->stop();
 }
 
-// Settings
-void CamTab::loadSettings(CamSettings *camset)
-{
-    settings = camset;
-    printf("%s Settings Loaded\n", qPrintable(settings->getTitle()));
-}
-
 // Return
 QString CamTab::getCurrentCam()
 {
@@ -100,7 +102,7 @@ void CamTab::downloadFinished(QNetworkReply *reply)
     // Create filename based on date and time. (eg yyyyMMddhhmmss.jpg)
     QDateTime now = QDateTime::currentDateTime();
     QString filename = QString("%1/%2.%3")
-            .arg(settings->getDir()).arg(now.toString("yyyyMMddhhmmss")).arg(QFileInfo(settings->getUrl().path()).completeSuffix());
+            .arg(settings->getDir()).arg(now.toString("yyyyMMddhhmmss")).arg(settings->getExt());
 
     if (reply->error()) {
         fprintf(stderr, "Download of %s failed: %s\n", settings->getUrl().toEncoded().constData(), qPrintable(reply->errorString()));
@@ -131,6 +133,7 @@ bool CamTab::saveToDisk(const QString &filename, QIODevice *data)
     file.write(data->readAll());
     file.close();
     currentFile = filename;
+    frameList.append(QFileInfo(currentFile));
     updateViewPort();
 
     return true;

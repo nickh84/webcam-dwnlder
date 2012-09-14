@@ -19,6 +19,7 @@ public:
     void setDir(QString dir);
     void setUrl(QString url);
     void setInterval(int interval);
+    void setExt(QString ext);
 
     // Optional settings...
     void setAdvTime(bool set);
@@ -32,6 +33,7 @@ public:
     QString getDir();
     QUrl getUrl();
     int getInterval();
+    QString getExt();
 
     bool isAdvTime();
     QTime getStartTime();

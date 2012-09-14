@@ -18,15 +18,12 @@ class CamTab : public QWidget
     QNetworkAccessManager manager;
 
 public:
-    explicit CamTab(QWidget *parent = 0);
+    explicit CamTab(CamSettings *set, QWidget *parent = 0);
     CamSettings *settings;
 
     // Cam Operation
     void start();
     void stop();
-
-    // Settings
-    void loadSettings(CamSettings *camset);
 
     // Returns
     QString getCurrentCam();
@@ -49,6 +46,7 @@ private:
     void statusText(QString txt);
 
     CamViewPort *viewPort;
+    QFileInfoList frameList;
     QString currentFile;
     QNetworkReply *reply;
     QTimer *timer;

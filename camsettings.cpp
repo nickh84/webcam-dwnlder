@@ -24,11 +24,17 @@ void CamSettings::setDir(QString dir)
 void CamSettings::setUrl(QString url)
 {
     setValue("url", url);
+    setExt(QFileInfo(QUrl(url).path()).completeSuffix());
 }
 
 void CamSettings::setInterval(int interval)
 {
     setValue("interval", interval);
+}
+
+void CamSettings::setExt(QString ext)
+{
+    setValue("extension", ext);
 }
 
 void CamSettings::setAdvTime(bool set)
@@ -74,6 +80,11 @@ QUrl CamSettings::getUrl()
 int CamSettings::getInterval()
 {
     return value("interval").toInt();
+}
+
+QString CamSettings::getExt()
+{
+    return value("extension").toString();
 }
 
 bool CamSettings::isAdvTime()

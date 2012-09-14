@@ -114,8 +114,7 @@ void MainWindow::createStatusBar()
 
 void MainWindow::createTab(CamSettings *settings)
 {
-    CamTab *cam = new CamTab;
-    cam->loadSettings(settings);
+    CamTab *cam = new CamTab(settings);
     tabWidget->addTab(cam, cam->settings->getTitle());
     cam->start();
 }

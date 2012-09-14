@@ -112,11 +112,11 @@ void MainWindow::createStatusBar()
     statusBar()->showMessage(tr("Ready"));
 }
 
-void MainWindow::createTab(QString fileName)
+void MainWindow::createTab(CamSettings *settings)
 {
     CamTab *cam = new CamTab;
-    cam->loadSettingsFile(fileName);
-    tabWidget->addTab(cam, cam->getTitle());
+    cam->loadSettings(settings);
+    tabWidget->addTab(cam, cam->settings->getTitle());
     cam->start();
 }
 
@@ -125,37 +125,19 @@ void MainWindow::openCam()
     QString file = QFileDialog::getOpenFileName(this, tr("Open Cam"), QDir::homePath(), tr("Cam (*.cam)"));
     if (file.isEmpty())
         return;
-    createTab(file);
+    CamSettings *settings = new CamSettings(file);
+    createTab(settings);
 }
 
 void MainWindow::newCam()
 {
-    newDialog *nc = new newDialog(this);
+    newDialog nc(this);
 
-    //PLACEHOLDERS
-    nc->title->setText("Pagoda");
-    nc->url->setText("http://174.121.245.214/cp/PagodaCam_1024.jpg");
-    nc->dir->setText("C:/Users/Nick/Documents/QTWorkspace/camtmp");
-
-    if(!nc->exec())
+    if(!nc.exec())
         return;
 
-    // Create a settings file for new cam
-    QString file = nc->dir->text();
-    file += '/';
-    file += nc->title->text();
-    file += ".cam";
-    printf("%s\n", qPrintable(file));
-
-    QSettings camsettings(file, QSettings::IniFormat);
-    camsettings.beginGroup("Cam");
-    camsettings.setValue("title", nc->title->text());
-    camsettings.setValue("url", nc->url->text());
-    camsettings.setValue("dir", nc->dir->text());
-    camsettings.setValue("interval", nc->interval->value());
-    camsettings.endGroup();
-
-    createTab(file);
+    createTab(nc.settings);
+    nc.close();
 }
 
 void MainWindow::startCam()
@@ -178,7 +160,7 @@ void MainWindow::optionsCam()
 void MainWindow::cvideoCam()
 {
     CamTab *cam = (CamTab *)tabWidget->currentWidget();
-    VideoCreator *cvideo = new VideoCreator(cam->getDir(), QFileInfo(cam->getUrl()).completeSuffix());
+    VideoCreator *cvideo = new VideoCreator(cam->settings->getDir(), QFileInfo(cam->settings->getDir()).completeSuffix());
     cvideo->show();
 }
 
@@ -199,7 +181,7 @@ void MainWindow::readSettings()
     int size = settings.beginReadArray("Cams");
     for (int i = 0; i < size; ++i) {
         settings.setArrayIndex(i);
-        createTab(settings.value("config").toString());
+        createTab(new CamSettings(settings.value("config").toString()));
     }
     settings.endArray();
 }
@@ -215,8 +197,8 @@ void MainWindow::writeSettings()
     for (int i = 0; i < tabWidget->count(); ++i) {
         settings.setArrayIndex(i);
         CamTab *tab = (CamTab *)tabWidget->widget(i);
-        settings.setValue("title", tab->getTitle());
-        settings.setValue("config", tab->getSettingsFile());
+        settings.setValue("title", tab->settings->getTitle());
+        settings.setValue("config", tab->settings->getConfig());
     }
     settings.endArray();
 }

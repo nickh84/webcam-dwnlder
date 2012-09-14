@@ -15,14 +15,16 @@ SOURCES += main.cpp\
     newdialog.cpp \
     camtab.cpp \
     camviewport.cpp \
-    videocreator.cpp
+    videocreator.cpp \
+    camsettings.cpp
 
 HEADERS  += mainwindow.h \
     config.h \
     newdialog.h \
     camtab.h \
     camviewport.h \
-    videocreator.h
+    videocreator.h \
+    camsettings.h
 
 CONFIG +=
 

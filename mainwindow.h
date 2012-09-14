@@ -3,6 +3,7 @@
 
 #include <QtGui/QMainWindow>
 #include <QSystemTrayIcon>
+#include "camsettings.h"
 
 class QMenu;
 class QAction;
@@ -31,7 +32,7 @@ private slots:
 
 private:
     void createTrayIcon();
-    void createTab(QString fileName);
+    void createTab(CamSettings *settings);
     void closeEvent(QCloseEvent *event);
     void readSettings();
     void writeSettings();

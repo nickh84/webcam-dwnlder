@@ -7,18 +7,26 @@
 #include <QFileDialog>
 
 #include "newdialog.h"
+#include "camsettings.h"
 
 newDialog::newDialog(QWidget *parent) :
     QDialog(parent)
 {
+    createLayout();
+    title->setText("Pagoda");
+    url->setText("http://174.121.245.214/cp/PagodaCam_1024.jpg");
+    dir->setText("C:/Users/Nick/Documents/QTWorkspace/camtmp");
+}
+
+void newDialog::createLayout()
+{
     QVBoxLayout *mainLayout = new QVBoxLayout;
     QFormLayout *formLayout = new QFormLayout;
-    QWidget *fBox = new QWidget;
 
     QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok
-                                                       | QDialogButtonBox::Cancel);
+                                                      | QDialogButtonBox::Cancel);
 
-    connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+    connect(buttonBox, SIGNAL(accepted()), this, SLOT(createSettings()));
     connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 
     title = new QLineEdit;
@@ -33,8 +41,7 @@ newDialog::newDialog(QWidget *parent) :
     formLayout->addRow(tr("&Dir"), dir);
     formLayout->addRow(tr("&Interval"), interval);
 
-    fBox->setLayout(formLayout);
-    mainLayout->addWidget(fBox);
+    mainLayout->addLayout(formLayout);
     mainLayout->addWidget(buttonBox, Qt::AlignRight);
     setLayout(mainLayout);
 
@@ -42,6 +49,19 @@ newDialog::newDialog(QWidget *parent) :
     setFixedSize(500,sizeHint().height());
 }
 
+void newDialog::createSettings()
+{
+    settings = new CamSettings(QString("%1/%2.cam").arg(dir->text()).arg(title->text()));
+    settings->setTitle(title->text());
+    settings->setDir(dir->text());
+    settings->setUrl(url->text());
+    settings->setInterval(interval->value()*1000);
+    settings->setAdvTime(false);
+    accept();
+}
+
+
+// Dir Combo Box class.
 dirComboBox::dirComboBox(QWidget *parent) :
     QWidget(parent)
 {

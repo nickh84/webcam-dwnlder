@@ -9,6 +9,7 @@
 #include <QDateTime>
 #include <QDir>
 #include "camviewport.h"
+#include "camsettings.h"
 
 class CamTab : public QWidget
 {
@@ -18,27 +19,18 @@ class CamTab : public QWidget
 
 public:
     explicit CamTab(QWidget *parent = 0);
+    CamSettings *settings;
 
     // Cam Operation
     void start();
     void stop();
 
     // Settings
-    void loadSettingsFile(QString fileName);
-    void saveSettingsFile();
-    void setUrl(QString u);
-    void setInterval(int i);
-    void setTitle(QString t);
-    void setDir(QString d);
-
+    void loadSettings(CamSettings *camset);
 
     // Returns
-    QString getSettingsFile();
     QString getCurrentCam();
-    QString getUrl();
-    int getInterval();
-    QString getTitle();
-    QString getDir();
+
 
 signals:
     void updateStatusText(QString txt);
@@ -57,12 +49,7 @@ private:
     void statusText(QString txt);
 
     CamViewPort *viewPort;
-    QString title;
-    QDir dir;
-    QUrl url;
-    int interval;
     QString currentFile;
-    QString settingsFile;
     QNetworkReply *reply;
     QTimer *timer;
     bool saveToDisk(const QString &filename, QIODevice *data);

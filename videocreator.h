@@ -18,14 +18,14 @@ class CVThread : public QThread
 public:
     CVThread(QObject *parent = 0);
 
-    void createVideo(QFileInfoList list);
+    void createVideo(QStringList list);
 
 signals:
     void updateTextBox(const QString str);
 
 private:
     void run();
-    QFileInfoList frameList;
+    QStringList frameList;
 };
 
 class VideoCreator : public QDialog
@@ -56,7 +56,8 @@ private:
     QDialogButtonBox *buttonBox;
     QString dir;
     QString suffix;
-    QFileInfoList frameList;
+    QStringList frameList;
+    QStringList currList;
 };
 
 #endif // VIDEOCREATOR_H

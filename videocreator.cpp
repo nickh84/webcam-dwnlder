@@ -15,6 +15,7 @@ VideoCreator::VideoCreator(QString _dir, QString _suffix, QWidget *parent) :
     suffix.prepend("*.");
     createLayout();
     getFrameList();
+    currList = frameList;
 
     connect(&cvt, SIGNAL(started()), this, SLOT(threadStart()));
     connect(&cvt, SIGNAL(finished()), this, SLOT(threadFinished()));
@@ -44,6 +45,7 @@ void VideoCreator::createLayout()
 
     // Listview and Control layout
     listView = new QListWidget;
+    listView->setSelectionMode(QAbstractItemView::ExtendedSelection);
     connect(listView, SIGNAL(itemSelectionChanged()), this, SLOT(listSelect()));
     listView->setFixedWidth(150);
 
@@ -57,22 +59,25 @@ void VideoCreator::createLayout()
 
 void VideoCreator::createVideo()
 {
-    cvt.createVideo(frameList);
+    cvt.createVideo(currList);
 }
 
 void VideoCreator::getFrameList()
 {
     // Frame List
     QDir dirlist(dir);
-    frameList = dirlist.entryInfoList(QStringList(suffix), QDir::Files, QDir::Name);
-
+    QStringList tmplist = dirlist.entryList(QStringList(suffix), QDir::Files, QDir::Name);
+    frameList.clear();
+    for (int i = 0; i < tmplist.count(); i++) {
+        frameList.append(QString("%1/%2").arg(dir).arg(tmplist.value(i)));
+    }
     // Populate Listbox
     QDateTime time;
     QListWidgetItem *item;
     for (int i = 0; i < frameList.count(); i++) {
-        time = QDateTime::fromString(frameList.value(i).baseName(), "yyyyMMddhhmmss");
+        time = QDateTime::fromString(QFileInfo(frameList.value(i)).baseName(), "yyyyMMddhhmmss");
         item = new QListWidgetItem(time.toString("MM-dd-yyyy hh:mm:ss"), listView);
-        item->setData(Qt::UserRole, QVariant(frameList.value(i).absoluteFilePath()));
+        item->setData(Qt::UserRole, QVariant(frameList.value(i)));
     }
 }
 
@@ -82,6 +87,14 @@ void VideoCreator::listSelect()
         return;
 
     viewPort->load(listView->currentItem()->data(Qt::UserRole).toString());
+
+    currList.clear();
+    if (listView->selectedItems().count() > 1) {
+        for (int i = 0; i < listView->selectedItems().count(); i++)
+            currList.append(listView->selectedItems().value(i)->data(Qt::UserRole).toString());
+    } else
+        currList = frameList;
+    currList.sort();
 }
 
 void VideoCreator::status(QString str)
@@ -105,7 +118,7 @@ CVThread::CVThread(QObject *parent)
 
 }
 
-void CVThread::createVideo(QFileInfoList list)
+void CVThread::createVideo(QStringList list)
 {
     frameList = list;
     if (!isRunning())
@@ -117,8 +130,8 @@ void CVThread::createVideo(QFileInfoList list)
 void CVThread::run()
 {
     QVideoEncoder encoder;
-    QImage frame(frameList.value(0).absoluteFilePath());
-    QString filename = QString("%1/video%2.avi").arg(frameList.value(0).absolutePath()).arg(QDateTime::currentDateTime().toString("yyyyMMddhhmmss"));
+    QImage frame(frameList.value(0));
+    QString filename = QString("%1/video%2.avi").arg(QFileInfo(frameList.value(0)).absolutePath()).arg(QDateTime::currentDateTime().toString("yyyyMMddhhmmss"));
     int height = frame.height();
     int width = frame.width();
     int fps = 25;
@@ -129,7 +142,7 @@ void CVThread::run()
     // Figure out bitrate
     int totalsize = 0;
     for (int i = 0; i<frameList.count(); i++) {
-        totalsize += frameList.value(i).size();
+        totalsize += QFileInfo(frameList.value(i)).size();
     }
     bitrate = ((totalsize/(frameList.count()+1))*fps)*2.5;
 
@@ -144,10 +157,10 @@ void CVThread::run()
     }
 
     for (int i = 0; i<frameList.count(); i++) {
-        frame.load(frameList.value(i).absoluteFilePath());
+        frame.load(frameList.value(i));
         size = encoder.encodeImage(frame);
         emit updateTextBox(QString("Encoded: %1 Size: %2")
-                        .arg(frameList.value(i).fileName()).arg(size));
+                        .arg(QFileInfo(frameList.value(i)).fileName()).arg(size));
     }
     if (encoder.close()) {
         emit updateTextBox("Finished encoding video...");

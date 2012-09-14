@@ -159,7 +159,7 @@ void MainWindow::optionsCam()
 void MainWindow::cvideoCam()
 {
     CamTab *cam = (CamTab *)tabWidget->currentWidget();
-    VideoCreator *cvideo = new VideoCreator(cam->settings->getDir(), QFileInfo(cam->settings->getDir()).completeSuffix());
+    VideoCreator *cvideo = new VideoCreator(cam->settings->getDir(), cam->settings->getExt());
     cvideo->show();
 }
 

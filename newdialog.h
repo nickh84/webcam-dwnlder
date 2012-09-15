@@ -4,6 +4,9 @@
 #include <QDialog>
 #include <QLineEdit>
 #include <QSpinBox>
+#include <QCheckBox>
+#include <QTimeEdit>
+#include <QList>
 #include "camsettings.h"
 
 // DIR COMBO BOX, LEAVE ALONE!
@@ -37,14 +40,21 @@ public slots:
 
 private slots:
     void createSettings();
+    void enableAdvTime(int state);
 
 private:
     QLineEdit *title;
     QLineEdit *url;
     dirComboBox *dir;
     QSpinBox *interval;
+    QCheckBox *advtime;
+    QTimeEdit *starttime;
+    QTimeEdit *endtime;
+    QList<QCheckBox *> weekdayList;
+    QStringList weekday;
+    QWidget *advwidget;
+
     void createLayout();
-    
 };
 
 #endif // NEWDIALOG_H

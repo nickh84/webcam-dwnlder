@@ -5,6 +5,7 @@
 #include <QDialogButtonBox>
 #include <QLabel>
 #include <QFileDialog>
+#include <QDateTime>
 
 #include "newdialog.h"
 #include "camsettings.h"
@@ -35,18 +36,54 @@ void newDialog::createLayout()
     interval = new QSpinBox;
     interval->setSuffix(" seconds");
     interval->setValue(60);
+    advtime = new QCheckBox;
+    connect(advtime, SIGNAL(stateChanged(int)), this, SLOT(enableAdvTime(int)));
 
     formLayout->addRow(tr("&Title"), title);
     formLayout->addRow(tr("&Url"), url);
     formLayout->addRow(tr("&Dir"), dir);
     formLayout->addRow(tr("&Interval"), interval);
-
+    formLayout->addRow(tr("&Enable advanced timing"), advtime);
     mainLayout->addLayout(formLayout);
+
+    // ADVANCED TIMING LAYOUT
+    advwidget = new QWidget;
+    QVBoxLayout *advmainlayout = new QVBoxLayout;
+
+    // Weekday layout
+    QGridLayout *wdlayout = new QGridLayout;
+    for (int i = 0; i<7; i++) {
+        weekdayList.append(new QCheckBox());
+        wdlayout->addWidget(new QLabel(QDate::shortDayName(i+1)), 0, i);
+        wdlayout->addWidget(weekdayList.value(i), 1, i);
+    }
+    advmainlayout->addLayout(wdlayout);
+
+    // Start and End time layouts
+    QFormLayout *timeslayout = new QFormLayout;
+    starttime = new QTimeEdit;
+    timeslayout->addRow(tr("Start Time:"), starttime);
+    endtime = new QTimeEdit;
+    timeslayout->addRow(tr("End Time:"), endtime);
+    advmainlayout->addLayout(timeslayout);
+
+
+    advwidget->setLayout(advmainlayout);
+    advwidget->setEnabled(false);
+    mainLayout->addWidget(advwidget);
     mainLayout->addWidget(buttonBox, Qt::AlignRight);
     setLayout(mainLayout);
 
     setWindowTitle(tr("Create new webcam recording"));
     setFixedSize(500,sizeHint().height());
+}
+
+void newDialog::enableAdvTime(int state)
+{
+    if (state)
+        advwidget->setEnabled(true);
+    else
+        advwidget->setEnabled(false);
 }
 
 void newDialog::createSettings()
@@ -56,7 +93,15 @@ void newDialog::createSettings()
     settings->setDir(dir->text());
     settings->setUrl(url->text());
     settings->setInterval(interval->value()*1000);
-    settings->setAdvTime(false);
+    settings->setAdvTime(advtime->isChecked());
+    settings->setStartTime(starttime->time());
+    settings->setEndTime(endtime->time());
+    weekday.clear();
+    for (int i = 0; i < 7; i++) {
+        if (weekdayList.value(i)->isChecked())
+            weekday.append(QDate::shortDayName(i+1));
+    }
+    settings->setWeekDay(weekday);
     accept();
 }
 

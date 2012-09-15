@@ -30,6 +30,7 @@ void CamSettings::setUrl(QString url)
 void CamSettings::setInterval(int interval)
 {
     setValue("interval", interval);
+    emit intChanged();
 }
 
 void CamSettings::setExt(QString ext)

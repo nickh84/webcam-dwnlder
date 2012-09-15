@@ -13,10 +13,39 @@
 newDialog::newDialog(QWidget *parent) :
     QDialog(parent)
 {
+    isNew = true;
     createLayout();
+    setWindowTitle(tr("Create new webcam recording"));
     title->setText("Pagoda");
     url->setText("http://174.121.245.214/cp/PagodaCam_1024.jpg");
     dir->setText("C:/Users/Nick/Documents/QTWorkspace/camtmp");
+}
+
+newDialog::newDialog(CamSettings *camset, QWidget *parent) :
+    QDialog(parent)
+{
+    isNew = false;
+    settings = camset;
+    createLayout();
+    setWindowTitle(tr("Change webcam settings"));
+
+    title->setEnabled(false);
+    title->setText(settings->getTitle());
+    dir->setEnabled(false);
+    dir->setText(settings->getDir());
+    url->setText(settings->getUrl().toString());
+    interval->setValue(settings->getInterval()/1000);
+    advtime->setChecked(settings->isAdvTime());
+
+    for (int i = 0; i<7; i++) {
+        if (settings->getWeekday().contains(QDate::shortDayName(i+1)))
+            weekdayList.value(i)->setChecked(true);
+        else
+            weekdayList.value(i)->setChecked(false);
+    }
+
+    starttime->setTime(settings->getStartTime());
+    endtime->setTime(settings->getEndTime());
 }
 
 void newDialog::createLayout()
@@ -40,8 +69,8 @@ void newDialog::createLayout()
     connect(advtime, SIGNAL(stateChanged(int)), this, SLOT(enableAdvTime(int)));
 
     formLayout->addRow(tr("&Title"), title);
-    formLayout->addRow(tr("&Url"), url);
     formLayout->addRow(tr("&Dir"), dir);
+    formLayout->addRow(tr("&Url"), url);
     formLayout->addRow(tr("&Interval"), interval);
     formLayout->addRow(tr("&Enable advanced timing"), advtime);
     mainLayout->addLayout(formLayout);
@@ -73,8 +102,6 @@ void newDialog::createLayout()
     mainLayout->addWidget(advwidget);
     mainLayout->addWidget(buttonBox, Qt::AlignRight);
     setLayout(mainLayout);
-
-    setWindowTitle(tr("Create new webcam recording"));
     setFixedSize(500,sizeHint().height());
 }
 
@@ -88,7 +115,8 @@ void newDialog::enableAdvTime(int state)
 
 void newDialog::createSettings()
 {
-    settings = new CamSettings(QString("%1/%2.cam").arg(dir->text()).arg(title->text()));
+    if (isNew)
+        settings = new CamSettings(QString("%1/%2.cam").arg(dir->text()).arg(title->text()));
     settings->setTitle(title->text());
     settings->setDir(dir->text());
     settings->setUrl(url->text());

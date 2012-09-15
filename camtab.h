@@ -37,6 +37,7 @@ public slots:
 
 private slots:
     void updateViewPort();
+    void updateInterval();
     void execute();
     void downloadFinished(QNetworkReply *reply);
 

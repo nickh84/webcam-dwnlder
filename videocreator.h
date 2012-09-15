@@ -5,6 +5,7 @@
 #include <QTextEdit>
 #include <QListWidget>
 #include <QPushButton>
+#include <QProgressBar>
 #include <QDialogButtonBox>
 #include <QFileInfoList>
 #include <QThread>
@@ -22,6 +23,9 @@ public:
 
 signals:
     void updateTextBox(const QString str);
+    void startProgress(int min, int max);
+    void updateProgress(int pos);
+    void stopProgress();
 
 private:
     void run();
@@ -44,6 +48,8 @@ private slots:
     void threadStart();
     void threadFinished();
     void status(QString str);
+    void startProgress(int min, int max);
+    void stopProgress();
 
 private:
     CVThread cvt;
@@ -54,6 +60,7 @@ private:
     QListWidget *listView;
     QPushButton *createButton;
     QDialogButtonBox *buttonBox;
+    QProgressBar *progressBar;
     QString dir;
     QString suffix;
     QStringList frameList;

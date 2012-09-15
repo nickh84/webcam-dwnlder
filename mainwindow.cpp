@@ -153,7 +153,12 @@ void MainWindow::stopCam()
 
 void MainWindow::optionsCam()
 {
+    CamTab *cam = (CamTab *)tabWidget->currentWidget();
+    newDialog nc(cam->settings, this);
 
+    if(!nc.exec())
+        return;
+    nc.close();
 }
 
 void MainWindow::cvideoCam()

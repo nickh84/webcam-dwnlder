@@ -26,20 +26,28 @@ void VideoCreator::createLayout()
 {
     // Viewport and Textbox layout
     viewPort = new CamViewPort;
+    viewPort->setMinimumSize(640,480);
     textBox = new QTextEdit;
     textBox->setFixedHeight(65);
     textBox->setReadOnly(true);
 
     // Control Layout
     QVBoxLayout *CTL_Layout = new QVBoxLayout;
+    progressBar = new QProgressBar;
+    progressBar->hide();
+    connect(&cvt, SIGNAL(startProgress(int,int)), this, SLOT(startProgress(int,int)));
+    connect(&cvt, SIGNAL(updateProgress(int)), progressBar, SLOT(setValue(int)));
+    connect(&cvt, SIGNAL(stopProgress()), this, SLOT(stopProgress()));
     createButton = new QPushButton(tr("Create Video"), this);
     buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
     connect(createButton, SIGNAL(clicked()), this, SLOT(createVideo()));
     connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
     connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+    progressBar->setFixedWidth(150);
     createButton->setFixedWidth(150);
     buttonBox->setFixedWidth(150);
     CTL_Layout->setSizeConstraint(QLayout::SetFixedSize);
+    CTL_Layout->addWidget(progressBar);
     CTL_Layout->addWidget(createButton);
     CTL_Layout->addWidget(buttonBox);
 
@@ -55,6 +63,19 @@ void VideoCreator::createLayout()
     mainLayout->addWidget(listView, 0, 1);
     mainLayout->addLayout(CTL_Layout, 1, 1);
     setLayout(mainLayout);
+    setWindowTitle("Create video");
+}
+
+void VideoCreator::startProgress(int min, int max)
+{
+    progressBar->setRange(min, max);
+    progressBar->show();
+}
+
+void VideoCreator::stopProgress()
+{
+    progressBar->hide();
+    progressBar->reset();
 }
 
 void VideoCreator::createVideo()
@@ -78,6 +99,8 @@ void VideoCreator::getFrameList()
         time = QDateTime::fromString(QFileInfo(frameList.value(i)).baseName(), "yyyyMMddhhmmss");
         item = new QListWidgetItem(time.toString("MM-dd-yyyy hh:mm:ss"), listView);
         item->setData(Qt::UserRole, QVariant(frameList.value(i)));
+        if (i == 0)
+            listView->setCurrentItem(item);
     }
 }
 
@@ -156,16 +179,20 @@ void CVThread::run()
         return;
     }
 
+    emit startProgress(0, frameList.count());
     for (int i = 0; i<frameList.count(); i++) {
         frame.load(frameList.value(i));
         size = encoder.encodeImage(frame);
+        emit updateProgress(i);
         emit updateTextBox(QString("Encoded: %1 Size: %2")
                         .arg(QFileInfo(frameList.value(i)).fileName()).arg(size));
     }
     if (encoder.close()) {
+        emit stopProgress();
         emit updateTextBox("Finished encoding video...");
         emit updateTextBox(filename);
         return;
     }
+    emit stopProgress();
     emit updateTextBox("Error closing video...");
 }

@@ -86,4 +86,5 @@ DEFINES += __STDC_CONSTANT_MACROS
 # ##############################################################################
 
 OTHER_FILES += \
-    TODO.txt
+    TODO.txt \
+    README.txt

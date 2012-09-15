@@ -32,6 +32,7 @@ class newDialog : public QDialog
     Q_OBJECT
 public:
     explicit newDialog(QWidget *parent = 0);
+    newDialog(CamSettings *camset, QWidget *parent = 0);
     CamSettings *settings;
 
 signals:
@@ -53,7 +54,7 @@ private:
     QList<QCheckBox *> weekdayList;
     QStringList weekday;
     QWidget *advwidget;
-
+    bool isNew;
     void createLayout();
 };
 

@@ -41,6 +41,7 @@ public:
     QStringList getWeekday();
 
 signals:
+    void intChanged();
     
 public slots:
     

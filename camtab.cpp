@@ -31,6 +31,7 @@ CamTab::CamTab(CamSettings * set, QWidget *parent) :
     timer = new QTimer(this);
     connect(&manager, SIGNAL(finished(QNetworkReply*)), SLOT(downloadFinished(QNetworkReply*)));
     connect(timer, SIGNAL(timeout()), this, SLOT(execute()));
+    connect(settings, SIGNAL(intChanged()), this, SLOT(updateInterval()));
 }
 
 void CamTab::createMainLayout()
@@ -55,6 +56,15 @@ void CamTab::updateViewPort()
     stxt += " - ";
     stxt += QDateTime::currentDateTime().toString();
     statusText(stxt);
+}
+
+void CamTab::updateInterval()
+{
+    if (!timer->isActive())
+        return;
+    statusText(QString("Interval Changed to %1 seconds. Resetting timer...").arg(settings->getInterval()/1000));
+    timer->start(settings->getInterval());
+    execute();
 }
 
 void CamTab::statusText(QString txt)

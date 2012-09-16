@@ -1,36 +1,7 @@
-#-------------------------------------------------
-#
-# Project created by QtCreator 2012-08-15T23:18:31
-#
-#-------------------------------------------------
-
-QT       += core gui network
-
-TARGET = WebcamDownloader
-TEMPLATE = app
+# Include the configuration file below in the QT .pro file, and modify the path accordingly.
 
 
 
-SOURCES += src/main.cpp\
-        src/mainwindow.cpp \
-    src/newdialog.cpp \
-    src/camtab.cpp \
-    src/camviewport.cpp \
-    src/videocreator.cpp \
-    src/camsettings.cpp
-
-HEADERS  += src/mainwindow.h \
-    src/config.h \
-    src/newdialog.h \
-    src/camtab.h \
-    src/camviewport.h \
-    src/videocreator.h \
-    src/camsettings.h
-
-CONFIG +=
-
-RESOURCES += \
-    src/camrc.qrc
 
 # ##############################################################################
 # ##############################################################################
@@ -51,13 +22,13 @@ RESOURCES += \
 # ##############################################################################
 
 # Set QTFFMPEGWRAPPER_SOURCE_PATH to point to the directory containing the QTFFmpegWrapper sources
-QTFFMPEGWRAPPER_SOURCE_PATH = QTFFmpegWrapper
+QTFFMPEGWRAPPER_SOURCE_PATH = ../QTFFmpegWrapper
 
 # Set FFMPEG_LIBRARY_PATH to point to the directory containing the FFmpeg import libraries (if needed - typically for Windows), i.e. the dll.a files
 FFMPEG_LIBRARY_PATH = ../ffmpeg_lib_win32
 
 # Set FFMPEG_INCLUDE_PATH to point to the directory containing the FFMPEG includes (if needed - typically for Windows)
-FFMPEG_INCLUDE_PATH = QTFFmpegWrapper
+FFMPEG_INCLUDE_PATH = ../QTFFmpegWrapper
 
 # ##############################################################################
 # Do not modify: FFMPEG default settings
@@ -86,6 +57,3 @@ DEFINES += __STDC_CONSTANT_MACROS
 # FFMPEG: END OF CONFIGURATION
 # ##############################################################################
 
-OTHER_FILES += \
-    TODO.txt \
-    README.txt

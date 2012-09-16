@@ -1,0 +1,9 @@
+Makefile
+Makefile.*
+object_script.*
+settings.ini
+*.pro.user
+*.o
+*.exe
+moc_*
+qrc_camrc.cpp

@@ -196,7 +196,6 @@ void MainWindow::about()
 {
     QMessageBox::about(this, tr("About Application"),
                        QString("Webcam Downloader " VERSION
-<<<<<<< HEAD
                                "\n\n"
                                "Built with Qt " QT_VERSION_STR " (using Qt %1)"
                                "\n"
@@ -217,24 +216,6 @@ void MainWindow::about()
                                "\n"
                                "You should have received a copy of the GNU General Public License\n"
                                "along with this program.  If not, see <http://www.gnu.org/licenses/>.").arg(qVersion()));
-=======
-                          "\n\n"
-                          "Built with Qt " QT_VERSION_STR " (using Qt %1)"
-                          "\n\n"
-                          "Copyright (C) 2012 Nick Heacock.\n"
-                          "This program is free software: you can redistribute it and/or modify\n"
-                          "it under the terms of the GNU General Public License as published by\n"
-                          "the Free Software Foundation, either version 3 of the License, or\n"
-                          "(at your option) any later version.\n"
-                          "\n"
-                          "This program is distributed in the hope that it will be useful,\n"
-                          "but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
-                          "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
-                          "GNU General Public License for more details.\n"
-                          "\n"
-                          "You should have received a copy of the GNU General Public License\n"
-                          "along with this program.  If not, see <http://www.gnu.org/licenses/>.").arg(qVersion()));
->>>>>>> 5bbf4b52caa2fdfe1daf239ba735e1b080a559f4
 }
 
 void MainWindow::readSettings()

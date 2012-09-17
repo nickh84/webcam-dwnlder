@@ -37,9 +37,6 @@ newDialog::newDialog(QWidget *parent) :
     isNew = true;
     createLayout();
     setWindowTitle(tr("Create new webcam recording"));
-    title->setText("Pagoda");
-    url->setText("http://174.121.245.214/cp/PagodaCam_1024.jpg");
-    dir->setText("C:/Users/Nick/Documents/QTWorkspace/camtmp");
 }
 
 newDialog::newDialog(CamSettings *camset, QWidget *parent) :

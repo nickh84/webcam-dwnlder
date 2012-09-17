@@ -75,6 +75,7 @@ private:
     QStringList weekday;
     QWidget *advwidget;
     bool isNew;
+    bool isValid();
     void createLayout();
 };
 

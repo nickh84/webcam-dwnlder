@@ -134,6 +134,10 @@ void MainWindow::createStatusBar()
 
 void MainWindow::createTab(CamSettings *settings)
 {
+    if (!settings->isValid()) {
+        printf("createTab: Error in settings...\n");
+        return;
+    }
     CamTab *cam = new CamTab(settings);
     tabWidget->addTab(cam, cam->settings->getTitle());
     cam->start();
@@ -202,10 +206,13 @@ void MainWindow::readSettings()
     move(settings.value("pos", QPoint(200, 200)).toPoint());
     settings.endGroup();
 
+    QFileInfo conf;
     int size = settings.beginReadArray("Cams");
     for (int i = 0; i < size; ++i) {
         settings.setArrayIndex(i);
-        createTab(new CamSettings(settings.value("config").toString()));
+        conf.setFile(settings.value("config").toString());
+        if (conf.exists())
+            createTab(new CamSettings(settings.value("config").toString()));
     }
     settings.endArray();
 }

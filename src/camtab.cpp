@@ -129,8 +129,7 @@ void CamTab::execute()
         if (!settings->getWeekday().contains(QDateTime::currentDateTime().toString("ddd")))
             return;
         // Check if time is between start and end time.
-        if (!((QTime::currentTime().operator >=(settings->getStartTime())) &&
-              (QTime::currentTime().operator <=(settings->getEndTime()))))
+        if (!settings->currentTimeValid())
             return;
     }
 

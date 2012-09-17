@@ -40,25 +40,28 @@ public:
     void setUrl(QString url);
     void setInterval(int interval);
     void setExt(QString ext);
-
     // Optional settings...
     void setAdvTime(bool set);
     void setStartTime(QTime time);
     void setEndTime(QTime time);
     void setWeekDay(QStringList weekday);
 
-    // Returns
+    // Setting Returns
     QString getConfig();
     QString getTitle();
     QString getDir();
     QUrl getUrl();
     int getInterval();
     QString getExt();
-
     bool isAdvTime();
     QTime getStartTime();
     QTime getEndTime();
     QStringList getWeekday();
+
+    // Utility Returns
+    bool isValid();
+    bool currentTimeValid();
+
 
 signals:
     void intChanged();

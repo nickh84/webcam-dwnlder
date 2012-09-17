@@ -18,6 +18,7 @@
 *
 **************************************************************************/
 
+#include <QFileInfo>
 #include "camsettings.h"
 
 CamSettings::CamSettings(const QString & fileName, QObject * parent) :
@@ -49,8 +50,10 @@ void CamSettings::setUrl(QString url)
 
 void CamSettings::setInterval(int interval)
 {
+    int oldval = getInterval();
     setValue("interval", interval);
-    emit intChanged();
+    if (interval != oldval)
+        emit intChanged();
 }
 
 void CamSettings::setExt(QString ext)
@@ -100,17 +103,17 @@ QUrl CamSettings::getUrl()
 
 int CamSettings::getInterval()
 {
-    return value("interval").toInt();
+    return value("interval", 60000).toInt();
 }
 
 QString CamSettings::getExt()
 {
-    return value("extension").toString();
+    return value("extension", QFileInfo(getUrl().path()).completeSuffix()).toString();
 }
 
 bool CamSettings::isAdvTime()
 {
-    return value("advtime").toBool();
+    return value("advtime", false).toBool();
 }
 
 QTime CamSettings::getStartTime()
@@ -126,4 +129,50 @@ QTime CamSettings::getEndTime()
 QStringList CamSettings::getWeekday()
 {
     return value("weekday").toStringList();
+}
+
+// Return true if all settings are valid.
+bool CamSettings::isValid()
+{
+    if (getTitle().isEmpty())
+        return false;
+    if (!QDir(getDir()).exists())
+        return false;
+    if (!getUrl().isValid())
+        return false;
+    if (!getInterval())
+        return false;
+    if (getExt().isEmpty())
+        return false;
+    if (isAdvTime()) {
+        for (int i = 0; i < getWeekday().count(); i++) {
+            if (!QDate::fromString(getWeekday().value(i), "ddd").isValid())
+                return false;
+        }
+        if (!getStartTime().isValid())
+            return false;
+        if (!getEndTime().isValid())
+            return false;
+    }
+    return true;
+}
+
+// Return true is current time is between starttime and endtime.
+// Fixes previous Midnight Transistion bug. (eg. ST=11:00pm, ET=3:00am would not work.)
+bool CamSettings::currentTimeValid()
+{
+    // Non-Midnight Transition.
+    if (getStartTime().operator <(getEndTime()))
+        if ((QTime::currentTime().operator >=(getStartTime())) &&
+                (QTime::currentTime().operator <=(getEndTime())))
+            return true;
+
+    // Midnight Transition. (only happens if starttime is greater than endtime)
+    if (getStartTime().operator >(getEndTime()))
+        if ((QTime::currentTime().operator >=(getStartTime())) ||
+                (QTime::currentTime().operator <=(getEndTime())))
+            return true;
+
+    // Time is not within range, return false
+    return false;
 }

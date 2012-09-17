@@ -26,6 +26,7 @@
 #include <QLabel>
 #include <QFileDialog>
 #include <QDateTime>
+#include <QMessageBox>
 
 #include "newdialog.h"
 #include "camsettings.h"
@@ -111,8 +112,10 @@ void newDialog::createLayout()
     // Start and End time layouts
     QFormLayout *timeslayout = new QFormLayout;
     starttime = new QTimeEdit;
+    starttime->setTime(starttime->minimumTime());
     timeslayout->addRow(tr("Start Time:"), starttime);
     endtime = new QTimeEdit;
+    endtime->setTime(endtime->maximumTime());
     timeslayout->addRow(tr("End Time:"), endtime);
     advmainlayout->addLayout(timeslayout);
 
@@ -133,10 +136,47 @@ void newDialog::enableAdvTime(int state)
         advwidget->setEnabled(false);
 }
 
+bool newDialog::isValid()
+{
+    // Check Url
+    if (!QUrl(url->text()).isValid()) {
+        QMessageBox::critical(this, "Invalid URL",
+                              "The URL you entered is not valid. Please use a valid URL.");
+        return false;
+    }
+    // Check Dir
+    if (!QDir(dir->text()).exists()) {
+        QMessageBox::critical(this, "Invalid Directory",
+                              "The directory does not exist. Please create it or use an existing one.");
+        return false;
+    }
+    // If advanced timing is used, check day and times
+    if (advtime->isChecked()) {
+        // Check if a day is selected.
+        bool daySelected;
+        for (int i = 0;i < 7;i++) {
+            if (weekdayList.value(i)->isChecked()) {
+                daySelected = true;
+                break;
+            }
+        }
+        if (!daySelected) {
+            QMessageBox::critical(this, "Invalid Weekday",
+                                  "No weekday was selected. Please select atleast one.");
+            return false;
+        }
+    }
+    return true;
+}
+
 void newDialog::createSettings()
 {
+    if (!isValid())
+        return;
+
     if (isNew)
         settings = new CamSettings(QString("%1/%2.cam").arg(dir->text()).arg(title->text()));
+
     settings->setTitle(title->text());
     settings->setDir(dir->text());
     settings->setUrl(url->text());

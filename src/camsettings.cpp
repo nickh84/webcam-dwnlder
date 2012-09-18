@@ -76,7 +76,7 @@ void CamSettings::setEndTime(QTime time)
     setValue("endtime", time);
 }
 
-void CamSettings::setWeekDay(QStringList weekday)
+void CamSettings::setWeekDay(QList<QVariant> weekday)
 {
     setValue("weekday", weekday);
 }
@@ -126,9 +126,9 @@ QTime CamSettings::getEndTime()
     return value("endtime").toTime();
 }
 
-QStringList CamSettings::getWeekday()
+QList<QVariant> CamSettings::getWeekday()
 {
-    return value("weekday").toStringList();
+    return value("weekday").toList();
 }
 
 // Return true if all settings are valid.
@@ -145,10 +145,8 @@ bool CamSettings::isValid()
     if (getExt().isEmpty())
         return false;
     if (isAdvTime()) {
-        for (int i = 0; i < getWeekday().count(); i++) {
-            if (!QDate::fromString(getWeekday().value(i), "ddd").isValid())
-                return false;
-        }
+        if (getWeekday().isEmpty())
+            return false;
         if (!getStartTime().isValid())
             return false;
         if (!getEndTime().isValid())
@@ -161,6 +159,20 @@ bool CamSettings::isValid()
 // Fixes previous Midnight Transistion bug. (eg. ST=11:00pm, ET=3:00am would not work.)
 bool CamSettings::currentTimeValid()
 {
+    if (!isAdvTime())
+        return true;
+
+    int d = QDate(QDate::currentDate()).dayOfWeek();
+    int nd = 1;
+    int pd = 7;
+    if (d != 7)
+        nd = d+1;
+    if (d != 1)
+        pd = d-1;
+
+    if (!getWeekday().contains(d))
+        return false;
+
     // Non-Midnight Transition.
     if (getStartTime().operator <(getEndTime()))
         if ((QTime::currentTime().operator >=(getStartTime())) &&
@@ -168,11 +180,14 @@ bool CamSettings::currentTimeValid()
             return true;
 
     // Midnight Transition. (only happens if starttime is greater than endtime)
-    if (getStartTime().operator >(getEndTime()))
-        if ((QTime::currentTime().operator >=(getStartTime())) ||
-                (QTime::currentTime().operator <=(getEndTime())))
-            return true;
-
-    // Time is not within range, return false
+    if (getStartTime().operator >(getEndTime())) {
+        if (QTime::currentTime().operator >=(getStartTime()))
+            if (getWeekday().contains(nd))
+                return true;
+        if (QTime::currentTime().operator <=(getEndTime()))
+            if (getWeekday().contains(pd))
+                return true;
+    }
     return false;
 }
+

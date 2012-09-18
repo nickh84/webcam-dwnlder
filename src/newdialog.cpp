@@ -56,7 +56,7 @@ newDialog::newDialog(CamSettings *camset, QWidget *parent) :
     advtime->setChecked(settings->isAdvTime());
 
     for (int i = 0; i<7; i++) {
-        if (settings->getWeekday().contains(QDate::shortDayName(i+1)))
+        if (settings->getWeekday().contains(i+1))
             weekdayList.value(i)->setChecked(true);
         else
             weekdayList.value(i)->setChecked(false);
@@ -184,7 +184,7 @@ void newDialog::createSettings()
     weekday.clear();
     for (int i = 0; i < 7; i++) {
         if (weekdayList.value(i)->isChecked())
-            weekday.append(QDate::shortDayName(i+1));
+            weekday.append(i+1);
     }
     settings->setWeekDay(weekday);
     accept();

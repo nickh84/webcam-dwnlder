@@ -44,7 +44,7 @@ public:
     void setAdvTime(bool set);
     void setStartTime(QTime time);
     void setEndTime(QTime time);
-    void setWeekDay(QStringList weekday);
+    void setWeekDay(QList<QVariant> weekday);
 
     // Setting Returns
     QString getConfig();
@@ -56,7 +56,7 @@ public:
     bool isAdvTime();
     QTime getStartTime();
     QTime getEndTime();
-    QStringList getWeekday();
+    QList<QVariant> getWeekday();
 
     // Utility Returns
     bool isValid();

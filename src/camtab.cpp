@@ -123,14 +123,9 @@ QString CamTab::getCurrentCam()
 // Internal
 void CamTab::execute()
 {
-    // If advanced timing is used, check day and time before downloading.
-    if (settings->isAdvTime()) {
-        // Check day of week
-        if (!settings->getWeekday().contains(QDateTime::currentDateTime().toString("ddd")))
-            return;
-        // Check if time is between start and end time.
-        if (!settings->currentTimeValid())
-            return;
+    // Check if time is between start and end time.
+    if (!settings->currentTimeValid()) {
+        return;
     }
 
     QNetworkRequest request(settings->getUrl());

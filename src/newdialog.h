@@ -72,7 +72,7 @@ private:
     QTimeEdit *starttime;
     QTimeEdit *endtime;
     QList<QCheckBox *> weekdayList;
-    QStringList weekday;
+    QList<QVariant> weekday;
     QWidget *advwidget;
     bool isNew;
     bool isValid();

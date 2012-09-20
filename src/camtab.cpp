@@ -54,6 +54,12 @@ CamTab::CamTab(CamSettings * set, QWidget *parent) :
     connect(settings, SIGNAL(intChanged()), this, SLOT(updateInterval()));
 }
 
+CamTab::~CamTab()
+{
+    stop();
+    printf("Tab Deleted\n");
+}
+
 void CamTab::createMainLayout()
 {
     viewPort = new CamViewPort;

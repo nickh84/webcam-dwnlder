@@ -143,6 +143,7 @@ void MainWindow::createTab(CamSettings *settings)
     cam->start();
 }
 
+
 void MainWindow::openCam()
 {
     QString file = QFileDialog::getOpenFileName(this, tr("Open Cam"), QDir::homePath(), tr("Cam (*.cam)"));

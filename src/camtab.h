@@ -39,6 +39,7 @@ class CamTab : public QWidget
 
 public:
     explicit CamTab(CamSettings *set, QWidget *parent = 0);
+    virtual ~CamTab();
     CamSettings *settings;
 
     // Cam Operation

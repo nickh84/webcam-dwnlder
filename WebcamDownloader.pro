@@ -9,8 +9,6 @@ QT       += core gui network
 TARGET = WebcamDownloader
 TEMPLATE = app
 
-
-
 SOURCES += src/main.cpp\
         src/mainwindow.cpp \
     src/newdialog.cpp \

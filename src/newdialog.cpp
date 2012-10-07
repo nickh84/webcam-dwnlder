@@ -82,6 +82,8 @@ void newDialog::createLayout()
     dir = new dirComboBox;
     interval = new QSpinBox;
     interval->setSuffix(" seconds");
+    interval->setMinimum(1);
+    interval->setMaximum(31536000);
     interval->setValue(60);
     advtime = new QCheckBox;
     connect(advtime, SIGNAL(stateChanged(int)), this, SLOT(enableAdvTime(int)));
